@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
 
-export default function FormInput({ setTodos }) {
+export default function FormInput({ dispatchTodos }) {
   const [inputData, setInputData] = useState("");
 
-  function handelAddTodo() {
-    setTodos((todos) => {
-      return [{ title: inputData, isCompleted: false, id: uuid() }, ...todos];
+  function handleAddTodo() {
+    dispatchTodos({
+      type: "add",
+      payload: { id: uuid(), title: inputData, isCompleted: false },
     });
+    setInputData("");
   }
 
   return (
@@ -20,7 +22,7 @@ export default function FormInput({ setTodos }) {
         placeholder="What do you need to do today?"
       />
       <button
-        onClick={handelAddTodo}
+        onClick={handleAddTodo}
         className="add btn btn-primary font-weight-bold todo-list-add-btn"
       >
         Add

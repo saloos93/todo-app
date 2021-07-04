@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useReducer } from "react";
 import Todo from "./components/Todo";
 import TodoInput from "./components/TodoInput";
 
@@ -8,24 +8,33 @@ const initialValues = [
   { id: 3, title: "Buy table", isCompleted: false },
 ];
 
+function todosReducer(todos, action) {
+  const todo = action.payload;
+  switch (action.type) {
+    case "add": {
+      return [todo, ...todos];
+    }
+
+    case "changeStatus": {
+      return todos.map((t) => {
+        if (t.id === todo.id) {
+          return { ...t, isCompleted: !t.isCompleted };
+        }
+        return t;
+      });
+    }
+
+    case "delete": {
+      return todos.filter((item) => item.id !== todo.id);
+    }
+
+    default:
+      return todos;
+  }
+}
+
 function App() {
-  const [todos, setTodos] = useState(initialValues);
-
-  function handleDelete(todoId) {
-    const newTodos = todos.filter((todo) => todo.id !== todoId);
-    setTodos(newTodos);
-  }
-
-  function handleChangeTodostatus(todoId) {
-    const newTodos = todos.map((todo) => {
-      if (todo.id === todoId) {
-        return { ...todo, isCompleted: !todo.isCompleted };
-      } else {
-        return todo;
-      }
-    });
-    setTodos(newTodos);
-  }
+  const [todos, dispatchTodos] = useReducer(todosReducer, initialValues);
 
   return (
     <div className="page-content page-container" id="page-content">
@@ -34,15 +43,11 @@ function App() {
           <div className="card px-3">
             <div className="card-body">
               <h4 className="card-title">Awesome Todo list</h4>
-              <TodoInput setTodos={setTodos} />
+              <TodoInput dispatchTodos={dispatchTodos} todos={todos} />
               <div className="list-wrapper">
                 <ul className="d-flex flex-column todo-list">
                   {todos.map((todo) => (
-                    <Todo
-                      handleChangeTodostatus={handleChangeTodostatus}
-                      handleDelete={handleDelete}
-                      todo={todo}
-                    />
+                    <Todo dispatchTodos={dispatchTodos} todo={todo} />
                   ))}
                 </ul>
               </div>

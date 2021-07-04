@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Todo({ todo, handleChangeTodostatus, handleDelete }) {
+export default function Todo({ todo, dispatchTodos }) {
   return (
     <li className={todo.isCompleted ? "completed" : ""}>
       <div className="form-check">
@@ -9,7 +9,9 @@ export default function Todo({ todo, handleChangeTodostatus, handleDelete }) {
             className="checkbox"
             type="checkbox"
             checked={todo.isCompleted}
-            onClick={() => handleChangeTodostatus(todo.id)}
+            onClick={() =>
+              dispatchTodos({ type: "changeStatus", payload: todo })
+            }
           />
           {todo.title}
           <i className="input-helper"> </i>
@@ -17,7 +19,7 @@ export default function Todo({ todo, handleChangeTodostatus, handleDelete }) {
       </div>
       <i
         className="remove mdi mdi-close-circle-outline"
-        onClick={() => handleDelete(todo.id)}
+        onClick={() => dispatchTodos({ type: "delete", payload: todo })}
       ></i>
     </li>
   );
